@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tỏ tình nè 💌</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    .card h1 {
+      font-size: 2rem;
+      color: #e91e63;
+    }
+
+    .card p {
+      font-size: 1.2rem;
+      margin: 20px 0;
+    }
+
+    .card button {
+      padding: 10px 20px;
+      border: none;
+      background: #e91e63;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    .card button:hover {
+      background: #c2185b;
+    }
+
+    .heart {
+      position: absolute;
+      color: red;
+      font-size: 20px;
+      animation: floatUp 4s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>💖 Hello crush 💖</h1>
+    <p>Tớ có điều này muốn nói với cậu...</p>
+    <button onclick="confess()">Nhấn vào đây nè!</button>
+  </div>
+
+  <script>
+    function confess() {
+      const card = document.querySelector('.card');
+      card.innerHTML = `
+        <h1>💘 Tớ thích cậu rất nhiều! 💘</h1>
+        <p>Muốn làm người yêu tớ hông? 😊</p>
+        <button onclick="alert('Tớ sẽ chờ câu trả lời của cậu nhé 💕')">OK hihi 😳</button>
+      `;
+    }
+
+    // Tạo trái tim bay lên
+    setInterval(() => {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+      heart.innerHTML = '❤️';
+      document.body.appendChild(heart);
+      setTimeout(() => {
+        heart.remove();
+      }, 4000);
+    }, 300);
+  </script>
+
+</body>
+</html>
