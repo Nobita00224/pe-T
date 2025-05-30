@@ -2,14 +2,16 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tỏ tình nè 💌</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Làm người yêu anh nha</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to right, #ff9a9e, #fad0c4);
-      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffe0f0, #ffddee, #ffe0f8);
+      background-size: 600% 600%;
+      animation: gradient 10s ease infinite;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,92 +19,170 @@
       overflow: hidden;
     }
 
-    .card {
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
+    @keyframes gradient {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .container {
       text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      position: relative;
+      padding: 20px;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+      max-width: 90%;
+    }
+
+    h1 {
+      color: #ff69b4;
+      font-size: 2em;
+      animation: glow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ff69b4; }
+      to   { text-shadow: 0 0 20px #ff69b4, 0 0 30px #ff1493; }
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1em;
+      margin: 10px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background-color: #ff69b4;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff1493;
+    }
+
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
       z-index: 10;
     }
 
-    .card h1 {
-      font-size: 2rem;
-      color: #e91e63;
-    }
-
-    .card p {
-      font-size: 1.2rem;
-      margin: 20px 0;
-    }
-
-    .card button {
-      padding: 10px 20px;
-      border: none;
-      background: #e91e63;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-
-    .card button:hover {
-      background: #c2185b;
-    }
-
     .heart {
+      width: 20px;
+      height: 20px;
       position: absolute;
-      color: red;
-      font-size: 20px;
-      animation: floatUp 4s linear infinite;
-      z-index: 1;
+      background: red;
+      transform: rotate(45deg);
+      animation: float 4s linear infinite;
     }
 
-    @keyframes floatUp {
+    .heart::before,
+    .heart::after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+
+    @keyframes float {
       0% {
+        transform: translateY(0) scale(1) rotate(45deg);
         opacity: 1;
-        transform: translateY(0) scale(1);
       }
       100% {
+        transform: translateY(-100vh) scale(1.5) rotate(45deg);
         opacity: 0;
-        transform: translateY(-100vh) scale(1.5);
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>💖 Hello crush 💖</h1>
-    <p>Tớ có điều này muốn nói với cậu...</p>
-    <button onclick="confess()">Nhấn vào đây nè!</button>
+  <div class="container" id="step1">
+    <h1>Anb thích em nhiều lắm luôn á 😳💕</h1>
+    <p>Em có thích anh hông? 🥺</p>
+    <button onclick="yesLove()">Cóa 💖</button>
+    <button onclick="noLove()">Không 😢</button>
   </div>
 
+  <div class="container" id="step2" style="display: none;">
+    <h1>Iu bé 😍💕</h1>
+    <p>Mãi iu nhoaaa 💘💘💘</p>
+  </div>
+
+  <div class="hearts" id="heartContainer"></div>
+
+  <!-- Nhạc nền -->
+  <iframe style="display: none"
+    src="https://www.youtube.com/embed/OClSr1xB1pw?autoplay=1&loop=1&playlist=OClSr1xB1pw"
+    allow="autoplay">
+  </iframe>
+
+  <!-- Thư viện pháo hoa -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
-    function confess() {
-      const card = document.querySelector('.card');
-      card.innerHTML = `
-        <h1>💘 Tớ thích cậu rất nhiều! 💘</h1>
-        <p>Muốn làm người yêu tớ hông? 😊</p>
-        <button onclick="alert('Tớ sẽ chờ câu trả lời của cậu nhé 💕')">OK hihi 😳</button>
-      `;
+    function yesLove() {
+      document.getElementById("step1").style.display = "none";
+      document.getElementById("step2").style.display = "block";
+      launchConfetti();
+      launchHearts();
     }
 
-    // Tạo trái tim bay lên
-    setInterval(() => {
-      const heart = document.createElement('div');
-      heart.classList.add('heart');
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-      heart.innerHTML = '❤️';
-      document.body.appendChild(heart);
-      setTimeout(() => {
-        heart.remove();
-      }, 4000);
-    }, 300);
-  </script>
+    function noLove() {
+      alert("Hông được đâu á 😤 Anh thích em cơ mà!");
+    }
 
+    function launchConfetti() {
+      const duration = 2 * 1000;
+      const end = Date.now() + duration;
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    }
+
+    function launchHearts() {
+      const container = document.getElementById('heartContainer');
+      for (let i = 0; i < 20; i++) {
+        let heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = 2 + Math.random() * 3 + 's';
+        container.appendChild(heart);
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+    }
+  </script>
 </body>
 </html>
