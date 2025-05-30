@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Làm người yêu anh nha</title>
+  <title>Tỏ tình dễ thương</title>
   <style>
     body {
       margin: 0;
@@ -17,6 +17,7 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      flex-direction: column;
     }
 
     @keyframes gradient {
@@ -29,9 +30,10 @@
       text-align: center;
       padding: 20px;
       border-radius: 20px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.85);
       box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
       max-width: 90%;
+      z-index: 1;
     }
 
     h1 {
@@ -68,7 +70,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 10;
+      z-index: 0;
     }
 
     .heart {
@@ -114,28 +116,58 @@
 </head>
 <body>
 
+  <!-- BƯỚC 1 -->
   <div class="container" id="step1">
-    <h1>Anb thích em nhiều lắm luôn á 😳💕</h1>
-    <p>Em có thích anh hông? 🥺</p>
-    <button onclick="yesLove()">Cóa 💖</button>
+    <h1>Tớ thích cậu nhiều lắm luôn á 😳💕</h1>
+    <p>Cậu có thích tớ hông? 🥺</p>
+    <button onclick="yesLove()">Có 💖</button>
     <button onclick="noLove()">Không 😢</button>
   </div>
 
+  <!-- BƯỚC 2 -->
   <div class="container" id="step2" style="display: none;">
-    <h1>Iu bé 😍💕</h1>
-    <p>Mãi iu nhoaaa 💘💘💘</p>
+    <h1>Yayyyy!!! Tớ vui lắm luôn á 😍💕</h1>
+    <p>Mãi iu cậu nhoaaa 💘💘💘</p>
   </div>
 
+  <!-- Tim bay -->
   <div class="hearts" id="heartContainer"></div>
 
-  <!-- Nhạc nền -->
-  <iframe style="display: none"
-    src="https://www.youtube.com/embed/OClSr1xB1pw?autoplay=1&loop=1&playlist=OClSr1xB1pw"
-    allow="autoplay">
+  <!-- Nhạc nền YouTube -->
+  <iframe id="ytplayer" style="display: none;"
+    src="https://www.youtube.com/embed/OClSr1xB1pw?enablejsapi=1&loop=1&playlist=OClSr1xB1pw"
+    allow="autoplay" frameborder="0">
   </iframe>
 
-  <!-- Thư viện pháo hoa -->
+  <!-- Nút bật nhạc -->
+  <button onclick="playMusic()">🎵 Bật nhạc</button>
+
+  <!-- Thư viện confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <!-- JS YouTube API -->
+  <script>
+    let player;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer');
+    }
+
+    function playMusic() {
+      if (player && player.playVideo) {
+        player.playVideo();
+      } else {
+        alert("Đang tải nhạc... hãy thử lại sau vài giây!");
+      }
+    }
+
+    // Tải API của YouTube
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+  </script>
+
+  <!-- Logic chính -->
   <script>
     function yesLove() {
       document.getElementById("step1").style.display = "none";
@@ -145,7 +177,7 @@
     }
 
     function noLove() {
-      alert("Hông được đâu á 😤 Anh thích em cơ mà!");
+      alert("Hông được đâu á 😤 Tớ vẫn thích cậu cơ!!");
     }
 
     function launchConfetti() {
@@ -172,15 +204,13 @@
 
     function launchHearts() {
       const container = document.getElementById('heartContainer');
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 30; i++) {
         let heart = document.createElement('div');
         heart.className = 'heart';
         heart.style.left = Math.random() * 100 + 'vw';
         heart.style.animationDuration = 2 + Math.random() * 3 + 's';
         container.appendChild(heart);
-        setTimeout(() => {
-          heart.remove();
-        }, 5000);
+        setTimeout(() => heart.remove(), 5000);
       }
     }
   </script>
