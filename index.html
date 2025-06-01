@@ -2,18 +2,16 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Không gian 3D chữ LED rơi (Module)</title>
+  <title>Không gian 3D - LED rơi</title>
   <style>
     body, html {
-      margin:0; padding:0; overflow:hidden; background: #000;
-      height: 100%; width: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin:0; padding:0; overflow:hidden;
+      background: #000; height: 100%; width: 100%;
+      font-family: sans-serif;
     }
     #container {
       width: 100vw;
       height: 100vh;
-      display: block;
-      overflow: hidden;
     }
   </style>
 </head>
@@ -31,70 +29,57 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 10, 30);
 
-    const renderer = new THREE.WebGLRenderer({antialias:true});
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 10;
-    controls.maxDistance = 50;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xff69b4, 1.5, 100);
+    const pointLight = new THREE.PointLight(0xff69b4, 2, 100);
     pointLight.position.set(0, 20, 20);
     scene.add(pointLight);
 
-    // Sao trắng lấp lánh
+    // Sao
     const starGeometry = new THREE.BufferGeometry();
     const starCount = 300;
     const starPositions = [];
-    for(let i=0; i<starCount; i++) {
+
+    for (let i = 0; i < starCount; i++) {
       starPositions.push(
-        (Math.random()-0.5)*100,
-        (Math.random()-0.5)*50 + 10,
-        (Math.random()-0.5)*100
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 50 + 10,
+        (Math.random() - 0.5) * 100
       );
     }
+
     starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
 
-    const starMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.3,
-      transparent: true,
-      opacity: 1,
-      sizeAttenuation: true
-    });
-
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3 });
     const stars = new THREE.Points(starGeometry, starMaterial);
     scene.add(stars);
 
-    // Text
-    const texts = [
-      "My destiny",
-      "16/11",
-      "I love you",
-      "Thank you for coming",
-      "Our anniversary",
-      "💟"
-    ];
-
-    let fallingTexts = [];
-
-    // Màu chuyển dần trắng → hồng
-    function lerpColor(c1, c2, t) {
-      return c1.clone().lerp(c2, t);
-    }
-
     const loader = new FontLoader();
-    loader.load('https://cdn.jsdelivr.net/npm/three@0.155.0/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-      function createTextMesh(text) {
+    loader.load('./fonts/helvetiker_regular.typeface.json', (font) => {
+
+      const messages = [
+        "My destiny",
+        "16/11",
+        "I love you",
+        "Thank you for coming",
+        "Our anniversary",
+        "💟"
+      ];
+
+      const fallingTexts = [];
+
+      function createText(text) {
         const geometry = new TextGeometry(text, {
           font: font,
           size: 1.5,
@@ -107,55 +92,61 @@
         });
         geometry.center();
 
-        const material = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 50, emissive: 0xff69b4, emissiveIntensity: 0.1 });
+        const material = new THREE.MeshPhongMaterial({
+          color: 0xffffff,
+          emissive: 0xff69b4,
+          emissiveIntensity: 0.1,
+          shininess: 80,
+        });
+
         const mesh = new THREE.Mesh(geometry, material);
-
-        return mesh;
-      }
-
-      function spawnFallingText() {
-        const text = texts[Math.floor(Math.random() * texts.length)];
-        const mesh = createTextMesh(text);
         mesh.position.set(
           (Math.random() - 0.5) * 30,
           20 + Math.random() * 10,
           (Math.random() - 0.5) * 30
         );
+
         mesh.userData = {
-          speed: 0.02 + Math.random()*0.03,
+          speed: 0.02 + Math.random() * 0.03,
           colorT: 0
-        }
+        };
+
         scene.add(mesh);
         fallingTexts.push(mesh);
       }
 
-      for(let i=0; i<10; i++) spawnFallingText();
+      // Khởi tạo
+      for (let i = 0; i < 10; i++) {
+        createText(messages[Math.floor(Math.random() * messages.length)]);
+      }
+
       setInterval(() => {
-        if(fallingTexts.length < 15) spawnFallingText();
-      }, 700);
+        if (fallingTexts.length < 15) {
+          createText(messages[Math.floor(Math.random() * messages.length)]);
+        }
+      }, 800);
 
       function animate() {
         requestAnimationFrame(animate);
 
-        // Nhấp nháy sao
-        const alphas = starGeometry.attributes.position.array;
-        // Không cần alpha attribute, có thể bỏ
+        // Update text
+        for (let i = fallingTexts.length - 1; i >= 0; i--) {
+          const mesh = fallingTexts[i];
+          mesh.position.y -= mesh.userData.speed;
 
-        // Update chữ rơi
-        for(let i = fallingTexts.length-1; i >= 0; i--) {
-          const t = fallingTexts[i];
-          t.position.y -= t.userData.speed;
+          // Chuyển màu từ trắng sang hồng
+          mesh.userData.colorT += 0.01;
+          if (mesh.userData.colorT > 1) mesh.userData.colorT = 1;
+          const c = new THREE.Color().lerpColors(
+            new THREE.Color(0xffffff),
+            new THREE.Color(0xff69b4),
+            mesh.userData.colorT
+          );
+          mesh.material.color.copy(c);
+          mesh.material.emissiveIntensity = 0.2 + 0.8 * mesh.userData.colorT;
 
-          t.userData.colorT += 0.005;
-          if(t.userData.colorT > 1) t.userData.colorT = 1;
-          const color = new THREE.Color(0xffffff);
-          const targetColor = new THREE.Color(0xff69b4);
-          const lerpedColor = lerpColor(color, targetColor, t.userData.colorT);
-          t.material.color.copy(lerpedColor);
-          t.material.emissiveIntensity = 0.5 + 0.5 * t.userData.colorT;
-
-          if(t.position.y < -5) {
-            scene.remove(t);
+          if (mesh.position.y < -5) {
+            scene.remove(mesh);
             fallingTexts.splice(i, 1);
           }
         }
@@ -163,11 +154,12 @@
         controls.update();
         renderer.render(scene, camera);
       }
+
       animate();
     });
 
     window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
